@@ -19,13 +19,15 @@ class MemberDetails:
 @dataclass
 class ModuleMembers:
     functions: Tuple[MemberDetails]
-    coroutinefunctions: Tuple[MemberDetails]
     classes: Tuple[MemberDetails]
 
 
 class DiscoverPackage:
     @staticmethod
-    def get_package_name():
+    def get_package_name(package_name: str = None):
+
+        if package_name:
+            return package_name
 
         folders = [d for d in os.listdir("./") if os.path.isdir(d)]
 
@@ -99,30 +101,6 @@ class DiscoverPackage:
         return tuple(non_imported_classes)
 
     @staticmethod
-    def _get_module_coroutines(member_details: MemberDetails, moduletext: str):
-
-        coroutinefunctions = [
-            i[0]
-            for i in inspect.getmembers(
-                member_details.module, inspect.iscoroutinefunction
-            )
-        ]
-
-        non_imported_coroutines = []
-        for co_name in coroutinefunctions:
-            if moduletext.count("async def " + co_name) == 1:
-                md = MemberDetails(
-                    object_name=co_name,
-                    module=member_details.module_name,
-                    module_spec=member_details.module_spec,
-                    module_name=member_details.module_name,
-                    module_path=member_details.module_path,
-                )
-                non_imported_coroutines.append(md)
-
-        return tuple(non_imported_coroutines)
-
-    @staticmethod
     def get_module_members(module_path: str):
 
         module_name = os.path.basename(module_path).split(".py")[0]
@@ -143,20 +121,19 @@ class DiscoverPackage:
         return ModuleMembers(
             functions=DiscoverPackage._get_module_functions(md, moduletext),
             classes=DiscoverPackage._get_module_classes(md, moduletext),
-            coroutinefunctions=DiscoverPackage._get_module_coroutines(md, moduletext),
         )
 
     @staticmethod
-    def get_module_imports(package_name: str, module_members: ModuleMembers):
+    def get_module_imports(module_members: ModuleMembers):
         """
 
         module_members: ModuleMembers(
             functions=(),
-            coroutinefunctions=(),
             classes=(
                 MemberDetails(
                     module='tox_creator',
-                    module_spec=ModuleSpec(name='tox_creator', loader=<_frozen_importlib_external.SourceFileLoader object at 0x7f2166b09fd0>, origin='/home/acmt/Documents/lware/lestest/./lestest/tox_creator.py'), module_name='tox_creator',
+                    module_spec=ModuleSpec(name='tox_creator', loader=<_frozen_importlib_external.SourceFileLoader object at 0x7f2166b09fd0>, origin='/home/acmt/Documents/lware/lestest/./lestest/tox_creator.py'),
+                    module_name='tox_creator',
                     module_path='./lestest/tox_creator.py',
                     object_name='ToxCreator'),)
             )
@@ -165,31 +142,30 @@ class DiscoverPackage:
         - from lestest.lestest import Lestest
         - from lestest.tox_creator import ToxCreator
 
+        Transformations:
+        module_path='./lestest/nested/n1/n1_module.py' -> from lestest.nested.n1.n1_module import object_name
+
         """
+
+        # './lestest/nested/n1/n1_module.py'
+        dst_import = (
+            lambda path: path.replace(".py", "")
+            .replace(".", "")
+            .replace(os.path.sep, ".")[1:]
+        )
 
         classes_import_statements = []
         for item in module_members.classes:
             importstatement = (
-                f"from {package_name}.{item.module_name} import {item.object_name}"
+                f"from {dst_import(item.module_path)} import {item.object_name}"
             )
             classes_import_statements.append(importstatement)
 
         functions_import_statements = []
         for item in module_members.functions:
             importstatement = (
-                f"from {package_name}.{item.module_name} import {item.object_name}"
+                f"from {dst_import(item.module_path)} import {item.object_name}"
             )
             functions_import_statements.append(importstatement)
 
-        coroutines_import_statements = []
-        for item in module_members.coroutinefunctions:
-            importstatement = (
-                f"from {package_name}.{item.module_name} import {item.object_name}"
-            )
-            coroutines_import_statements.append(importstatement)
-
-        return (
-            classes_import_statements
-            + functions_import_statements
-            + coroutines_import_statements
-        )
+        return classes_import_statements + functions_import_statements
