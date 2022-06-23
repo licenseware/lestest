@@ -1,4 +1,6 @@
 # Lestest
+<img src="./coverage.svg">
+
 
 Generate boilerplate unittests from given package. Ensures each class or function has a corespondent test. 
 
@@ -75,3 +77,17 @@ class ExtendedLestest(Lestest):
 ```
 
 This way you can alter functionality in any way you want.
+
+
+## Developing
+
+- clone the repository;
+- install virtualenv: `pip3 install virtualenv`;
+- create virtualenv: `virtualenv ./`;
+- activate virtualenv: `source ./bin/activate`;
+- install dependencies: `pip3 install -r requirements.txt`;
+- run tests: `python3 -m unittest tests/test_*`;
+- run tests with coverage: `coverage run --source=lestest -m unittest tests/test_*`;
+- generate html files to see coverage details: `coverage html`;
+- see coverage details in the terminal: `coverage report -m`; 
+- create coverage badge from coverage created: `coverage-badge -o coverage.svg`;

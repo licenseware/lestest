@@ -1,29 +1,21 @@
-import os
+from .tox_creator import ToxCreator
+from .pytest_ini_creator import PytestIniCreator
+from .requirements_creator import RequirementsCreator
 
 
 
 class Lestest:
 
-    def __init__(self) -> None:
-        pass
+    def __init__(
+        self, 
+        tox: ToxCreator, 
+        pytestini: PytestIniCreator,
+        requirements: RequirementsCreator
+    ) -> None:
+        self.tox = tox
+        self.pytestini = pytestini
+        self.requirements = requirements
 
-    def create_tox_file(self):
-        pass
-
-    def create_pytest_ini_file(self):
-        pass
-
-    def create_test_requirements_file(self):
-        pass
-        
-    def traverse_directory_for_packages(self):
-        pass
-
-    def traverse_packages_for_modules(self):
-        pass
-
-    def traverse_modules_for_objects(self):
-        pass
 
     def boilerplate(self):
         """ 
@@ -33,6 +25,10 @@ class Lestest:
         """
         pass
 
+
     def generate(self):
         """ Generate unittests from the discovered packages in the current directory """
-        pass
+
+        self.tox.generate()
+        self.pytestini.generate()
+        self.requirements.generate()

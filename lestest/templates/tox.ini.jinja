@@ -1,0 +1,18 @@
+[tox]
+envlist = py38
+
+[testenv]
+skip_install = True
+setenv =
+
+    DEBUG=true
+    ENVIRONMENT=local
+
+deps =
+    -r requirements-dev.txt
+
+commands =
+    coverage run --source=app -m pytest -s -v {posargs}
+    coverage html
+    coverage report -m
+    coverage-badge -o coverage.svg

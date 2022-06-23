@@ -39,7 +39,7 @@ setup(
     package_data={"": ["*"]},
     entry_points={
         'console_scripts': [
-            'licenseware=licenseware.cli:cli_entrypoint',
+            'lestest=lestest.cli:cli_entrypoint',
         ],
     }
 )
