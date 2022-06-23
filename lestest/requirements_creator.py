@@ -1,17 +1,15 @@
 from types import ModuleType
-from .base_jinja import BaseJinja
-from . import templates
-
+from lestest.base_jinja import BaseJinja
+from lestest import templates
 
 
 class RequirementsCreator:
-
     def __init__(
-        self, 
-        base: BaseJinja = None, 
+        self,
+        base: BaseJinja = None,
         filename: str = "requirements-dev.txt",
         filepath: str = None,
-        template_filename: str = "requirements-dev.txt.jinja", 
+        template_filename: str = "requirements-dev.txt.jinja",
         template_resource: ModuleType = templates,
         **template_vars
     ) -> None:
@@ -35,6 +33,3 @@ class RequirementsCreator:
         self.base.save_file(path, content)
 
         return path
-
-
-        

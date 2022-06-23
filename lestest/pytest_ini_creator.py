@@ -1,16 +1,15 @@
 from types import ModuleType
-from .base_jinja import BaseJinja
-from . import templates
+from lestest.base_jinja import BaseJinja
+from lestest import templates
 
 
 class PytestIniCreator:
-
     def __init__(
-        self, 
-        base: BaseJinja = None, 
+        self,
+        base: BaseJinja = None,
         filename: str = "pytest.ini",
         filepath: str = None,
-        template_filename: str = "pytest.ini.jinja", 
+        template_filename: str = "pytest.ini.jinja",
         template_resource: ModuleType = templates,
         **template_vars
     ) -> None:
@@ -34,6 +33,3 @@ class PytestIniCreator:
         self.base.save_file(path, content)
 
         return path
-
-
-        

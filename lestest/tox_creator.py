@@ -1,16 +1,15 @@
 from types import ModuleType
-from .base_jinja import BaseJinja
-from . import templates
+from lestest.base_jinja import BaseJinja
+from lestest import templates
 
 
 class ToxCreator:
-
     def __init__(
-        self, 
-        base: BaseJinja = None, 
+        self,
+        base: BaseJinja = None,
         filename: str = "tox.ini",
         filepath: str = None,
-        template_filename: str = "tox.ini.jinja", 
+        template_filename: str = "tox.ini.jinja",
         template_resource: ModuleType = templates,
         **template_vars
     ) -> None:
@@ -20,7 +19,6 @@ class ToxCreator:
         self.template_filename = template_filename
         self.template_resource = template_resource
         self.template_vars = template_vars
-
 
     def generate(self):
 
@@ -35,6 +33,3 @@ class ToxCreator:
         self.base.save_file(path, content)
 
         return path
-
-
-        

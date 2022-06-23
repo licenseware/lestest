@@ -87,7 +87,8 @@ This way you can alter functionality in any way you want.
 - activate virtualenv: `source ./bin/activate`;
 - install dependencies: `pip3 install -r requirements.txt`;
 - run tests: `python3 -m unittest tests/test_*`;
-- run tests with coverage: `coverage run --source=lestest -m unittest tests/test_*`;
+- or run tests with coverage: `coverage run --source=lestest -m unittest tests/test_*`;
 - generate html files to see coverage details: `coverage html`;
 - see coverage details in the terminal: `coverage report -m`; 
 - create coverage badge from coverage created: `coverage-badge -o coverage.svg`;
+- shortcut for running tests: `make run-tests`;
