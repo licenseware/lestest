@@ -1,6 +1,4 @@
-import os, re
 from setuptools import setup, find_packages
-from functools import reduce
 
 # https://packaging.python.org/guides/distributing-packages-using-setuptools/?highlight=setup.py#setup-py
 # Distribute py wheels
@@ -15,10 +13,9 @@ with open("README.md", "r") as f:
 
 with open("requirements.txt", "r") as f:
     REQUIREMENTS = f.readlines()
-    
-    
-    
-VERSION = '0.0.1'
+
+
+VERSION = "0.0.1"
 
 setup(
     name="lestest",
@@ -27,19 +24,16 @@ setup(
     url="https://licenseware.io/",
     author="Licenseware",
     author_email="contact@licenseware.io",
-    license='',
+    license="",
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=REQUIREMENTS,
-    packages=find_packages(
-        where=".",
-        exclude=["tests"]
-    ),
+    packages=find_packages(where=".", exclude=["tests"]),
     include_package_data=True,
     package_data={"": ["*"]},
     entry_points={
-        'console_scripts': [
-            'lestest=lestest.cli:cli_entrypoint',
+        "console_scripts": [
+            "lestest=lestest.cli:cli_entrypoint",
         ],
-    }
+    },
 )
