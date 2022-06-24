@@ -1,0 +1,14 @@
+import pytest
+{{ import_object_statement }}
+
+
+# tox tests/test_{{file_test_name}}.py
+
+def test_{{ object_name_lower }}():
+    """ {{ object_docs }} """
+
+    {{ object_call_statement }}
+
+    {% for cm_statement in class_methods %}
+    {{cm_statement}}
+    {% endfor %}

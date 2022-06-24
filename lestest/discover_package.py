@@ -1,30 +1,15 @@
 import os
 import inspect
+from typing import List
+from lestest import types
 import importlib.util as importutil
-from dataclasses import dataclass
-from types import ModuleType
-from typing import Tuple, List
-from importlib._bootstrap import ModuleSpec
-
-
-@dataclass
-class MemberDetails:
-    module: ModuleType
-    module_spec: ModuleSpec
-    module_name: str
-    module_path: str
-    object: callable = None
-    object_name: str = None
-    import_statement: str = None
-
-
-@dataclass
-class ModuleMembers:
-    functions: Tuple[MemberDetails]
-    classes: Tuple[MemberDetails]
 
 
 class DiscoverPackage:
+    """
+    Given or not a package name get all objects details (import statements, the object itself, etc)
+    """
+
     @staticmethod
     def get_package_name(package_name: str = None):
 
@@ -61,7 +46,7 @@ class DiscoverPackage:
         return file_modules
 
     @staticmethod
-    def _get_module_functions(member_details: MemberDetails, moduletext: str):
+    def _get_module_functions(member_details: types.MemberDetails, moduletext: str):
 
         functions = [
             i[0] for i in inspect.getmembers(member_details.module, inspect.isfunction)
@@ -70,7 +55,7 @@ class DiscoverPackage:
         non_imported_funcs = []
         for func_name in functions:
             if moduletext.count("def " + func_name) == 1:
-                md = MemberDetails(
+                md = types.MemberDetails(
                     object_name=func_name,
                     module=member_details.module,
                     object=getattr(member_details.module, func_name),
@@ -83,7 +68,7 @@ class DiscoverPackage:
         return tuple(non_imported_funcs)
 
     @staticmethod
-    def _get_module_classes(member_details: MemberDetails, moduletext: str):
+    def _get_module_classes(member_details: types.MemberDetails, moduletext: str):
 
         classes = [
             i[0] for i in inspect.getmembers(member_details.module, inspect.isclass)
@@ -92,7 +77,7 @@ class DiscoverPackage:
         non_imported_classes = []
         for cls_name in classes:
             if moduletext.count("class " + cls_name) == 1:
-                md = MemberDetails(
+                md = types.MemberDetails(
                     object_name=cls_name,
                     module=member_details.module,
                     object=getattr(member_details.module, cls_name),
@@ -105,7 +90,9 @@ class DiscoverPackage:
         return tuple(non_imported_classes)
 
     @staticmethod
-    def _update_module_imports(module_members: ModuleMembers) -> List[MemberDetails]:
+    def _update_module_imports(
+        module_members: types.ModuleMembers,
+    ) -> List[types.MemberDetails]:
         """
 
         module_members: ModuleMembers(
@@ -137,7 +124,7 @@ class DiscoverPackage:
         for item in module_members.classes:
             importst = f"from {dst_import(item.module_path)} import {item.object_name}"
 
-            md = MemberDetails(
+            md = types.MemberDetails(
                 module=item.module,
                 module_spec=item.module_spec,
                 module_name=item.module_name,
@@ -151,7 +138,7 @@ class DiscoverPackage:
 
         for item in module_members.functions:
             importst = f"from {dst_import(item.module_path)} import {item.object_name}"
-            md = MemberDetails(
+            md = types.MemberDetails(
                 module=item.module,
                 module_spec=item.module_spec,
                 module_name=item.module_name,
@@ -165,7 +152,7 @@ class DiscoverPackage:
         return import_statements
 
     @staticmethod
-    def get_module_members(module_path: str) -> List[MemberDetails]:
+    def get_module_members(module_path: str) -> List[types.MemberDetails]:
 
         module_name = os.path.basename(module_path).split(".py")[0]
         spec = importutil.spec_from_file_location(module_name, module_path)
@@ -175,14 +162,14 @@ class DiscoverPackage:
         with open(module_path, "r") as f:
             moduletext = f.read()
 
-        md = MemberDetails(
+        md = types.MemberDetails(
             module=module,
             module_spec=spec,
             module_name=module_name,
             module_path=module_path,
         )
 
-        module_members = ModuleMembers(
+        module_members = types.ModuleMembers(
             functions=DiscoverPackage._get_module_functions(md, moduletext),
             classes=DiscoverPackage._get_module_classes(md, moduletext),
         )
@@ -190,3 +177,16 @@ class DiscoverPackage:
         module_details_updated = DiscoverPackage._update_module_imports(module_members)
 
         return module_details_updated
+
+    @staticmethod
+    def get_package_members(package_name: str = None) -> List[types.MemberDetails]:
+
+        package_name = DiscoverPackage.get_package_name(package_name)
+        module_paths = DiscoverPackage.get_module_paths(package_name)
+
+        allmm = []
+        for module_path in module_paths:
+            mm = DiscoverPackage.get_module_members(module_path)
+            allmm.extend(mm)
+
+        return allmm
