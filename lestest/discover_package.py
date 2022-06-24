@@ -3,7 +3,7 @@ import inspect
 import importlib.util as importutil
 from dataclasses import dataclass
 from types import ModuleType
-from typing import Tuple
+from typing import Tuple, List
 from importlib._bootstrap import ModuleSpec
 
 
@@ -13,7 +13,9 @@ class MemberDetails:
     module_spec: ModuleSpec
     module_name: str
     module_path: str
+    object: callable = None
     object_name: str = None
+    import_statement: str = None
 
 
 @dataclass
@@ -70,7 +72,8 @@ class DiscoverPackage:
             if moduletext.count("def " + func_name) == 1:
                 md = MemberDetails(
                     object_name=func_name,
-                    module=member_details.module_name,
+                    module=member_details.module,
+                    object=getattr(member_details.module, func_name),
                     module_spec=member_details.module_spec,
                     module_name=member_details.module_name,
                     module_path=member_details.module_path,
@@ -91,7 +94,8 @@ class DiscoverPackage:
             if moduletext.count("class " + cls_name) == 1:
                 md = MemberDetails(
                     object_name=cls_name,
-                    module=member_details.module_name,
+                    module=member_details.module,
+                    object=getattr(member_details.module, cls_name),
                     module_spec=member_details.module_spec,
                     module_name=member_details.module_name,
                     module_path=member_details.module_path,
@@ -101,30 +105,7 @@ class DiscoverPackage:
         return tuple(non_imported_classes)
 
     @staticmethod
-    def get_module_members(module_path: str):
-
-        module_name = os.path.basename(module_path).split(".py")[0]
-        spec = importutil.spec_from_file_location(module_name, module_path)
-        module = importutil.module_from_spec(spec)
-        spec.loader.exec_module(module)
-
-        with open(module_path, "r") as f:
-            moduletext = f.read()
-
-        md = MemberDetails(
-            module=module,
-            module_spec=spec,
-            module_name=module_name,
-            module_path=module_path,
-        )
-
-        return ModuleMembers(
-            functions=DiscoverPackage._get_module_functions(md, moduletext),
-            classes=DiscoverPackage._get_module_classes(md, moduletext),
-        )
-
-    @staticmethod
-    def get_module_imports(module_members: ModuleMembers):
+    def _update_module_imports(module_members: ModuleMembers) -> List[MemberDetails]:
         """
 
         module_members: ModuleMembers(
@@ -142,30 +123,70 @@ class DiscoverPackage:
         - from lestest.lestest import Lestest
         - from lestest.tox_creator import ToxCreator
 
-        Transformations:
-        module_path='./lestest/nested/n1/n1_module.py' -> from lestest.nested.n1.n1_module import object_name
-
         """
 
-        # './lestest/nested/n1/n1_module.py'
+        # Convert from: './lestest/nested/n1/n1_module.py' to: 'lestest.nested.n1.n1_module'
         dst_import = (
             lambda path: path.replace(".py", "")
             .replace(".", "")
             .replace(os.path.sep, ".")[1:]
         )
 
-        classes_import_statements = []
+        import_statements = []
+
         for item in module_members.classes:
-            importstatement = (
-                f"from {dst_import(item.module_path)} import {item.object_name}"
-            )
-            classes_import_statements.append(importstatement)
+            importst = f"from {dst_import(item.module_path)} import {item.object_name}"
 
-        functions_import_statements = []
+            md = MemberDetails(
+                module=item.module,
+                module_spec=item.module_spec,
+                module_name=item.module_name,
+                module_path=item.module_path,
+                object=item.object,
+                object_name=item.object_name,
+                import_statement=importst,
+            )
+
+            import_statements.append(md)
+
         for item in module_members.functions:
-            importstatement = (
-                f"from {dst_import(item.module_path)} import {item.object_name}"
+            importst = f"from {dst_import(item.module_path)} import {item.object_name}"
+            md = MemberDetails(
+                module=item.module,
+                module_spec=item.module_spec,
+                module_name=item.module_name,
+                module_path=item.module_path,
+                object=item.object,
+                object_name=item.object_name,
+                import_statement=importst,
             )
-            functions_import_statements.append(importstatement)
+            import_statements.append(md)
 
-        return classes_import_statements + functions_import_statements
+        return import_statements
+
+    @staticmethod
+    def get_module_members(module_path: str) -> List[MemberDetails]:
+
+        module_name = os.path.basename(module_path).split(".py")[0]
+        spec = importutil.spec_from_file_location(module_name, module_path)
+        module = importutil.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        with open(module_path, "r") as f:
+            moduletext = f.read()
+
+        md = MemberDetails(
+            module=module,
+            module_spec=spec,
+            module_name=module_name,
+            module_path=module_path,
+        )
+
+        module_members = ModuleMembers(
+            functions=DiscoverPackage._get_module_functions(md, moduletext),
+            classes=DiscoverPackage._get_module_classes(md, moduletext),
+        )
+
+        module_details_updated = DiscoverPackage._update_module_imports(module_members)
+
+        return module_details_updated
