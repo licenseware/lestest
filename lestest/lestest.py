@@ -1,6 +1,8 @@
 from lestest.tox_creator import ToxCreator
 from lestest.pytest_ini_creator import PytestIniCreator
 from lestest.requirements_creator import RequirementsCreator
+from lestest.unittest_creator import UnittestCreator
+from lestest import types
 
 
 class Lestest:
@@ -9,10 +11,12 @@ class Lestest:
         tox: ToxCreator,
         pytestini: PytestIniCreator,
         requirements: RequirementsCreator,
+        unittest: UnittestCreator,
     ) -> None:
         self.tox = tox
         self.pytestini = pytestini
         self.requirements = requirements
+        self.unittest = unittest
 
     def boilerplate(self):
         """
@@ -25,6 +29,11 @@ class Lestest:
     def generate(self):
         """Generate unittests from the discovered packages in the current directory"""
 
-        self.tox.generate()
-        self.pytestini.generate()
-        self.requirements.generate()
+        gp = types.GeneratedPaths(
+            tox=self.tox.generate(),
+            pytestini=self.pytestini.generate(),
+            requirements=self.requirements.generate(),
+            unittests=tuple(self.unittest.generate()),
+        )
+
+        return gp

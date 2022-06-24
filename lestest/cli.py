@@ -1,5 +1,11 @@
 import typer
-from lestest import Lestest, ToxCreator, PytestIniCreator, RequirementsCreator
+from lestest import (
+    Lestest,
+    ToxCreator,
+    PytestIniCreator,
+    RequirementsCreator,
+    UnittestCreator,
+)
 
 
 app = typer.Typer(
@@ -11,13 +17,14 @@ app = typer.Typer(
 
 
 @app.command()
-def generate():
+def generate(package: str = None):
     """Generate unittest files for all functions and classes from current directory packages"""
 
     lestest = Lestest(
         tox=ToxCreator(),
         pytestini=PytestIniCreator(),
         requirements=RequirementsCreator(),
+        unittest=UnittestCreator(package),
     )
 
     lestest.generate()

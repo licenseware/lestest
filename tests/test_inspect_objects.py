@@ -1,8 +1,5 @@
 import unittest
-import inspect
-
-from pytest import param
-
+import os
 from lestest import DiscoverPackage, BaseJinja, templates, TestMetadata
 
 # python3 -m unittest tests/test_inspect_objects.py
@@ -35,7 +32,9 @@ class TestInspectObjects(unittest.TestCase):
                 class_methods=tv.class_methods,
             )
 
-            print(filepath)
-            print(filecontents)
+            assert "Class1(" in filecontents
+
+            # print(filepath)
+            # print(filecontents)
 
             break

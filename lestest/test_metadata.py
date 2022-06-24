@@ -30,7 +30,7 @@ class TestMetadata:
         params = ""
         for param, val in mock_params.items():
             params = f"{param}={val}, " + params
-        params = params[:-2]
+        params = params[:-2] if params.endswith(", ") else params
         return params
 
     @staticmethod
