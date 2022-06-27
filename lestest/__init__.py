@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.append(os.getcwd())
+
 from lestest.lestest import Lestest
 from lestest.base_jinja import BaseJinja
 from lestest.tox_creator import ToxCreator
