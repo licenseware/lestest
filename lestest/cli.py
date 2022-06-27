@@ -32,12 +32,5 @@ def generate(package: str = None):
     typer.echo("Generated unittest boilerplate files")
 
 
-@app.command()
-def boilerplate():
-    """Generate `lestest_templates` external templates folder which you can overwrite"""
-
-    typer.echo("TODO Generating unittest files")
-
-
 def cli_entrypoint():
     app()
