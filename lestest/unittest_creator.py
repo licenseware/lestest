@@ -1,4 +1,5 @@
 from types import ModuleType
+
 from lestest.base_jinja import BaseJinja
 from lestest.discover_package import DiscoverPackage
 from lestest.test_metadata import TestMetadata
@@ -32,6 +33,9 @@ class UnittestCreator:
 
         paths = []
         for pm in pkg_members:
+
+            if self.template_handler.marshmallow_schema(pm.object):
+                continue
 
             tv = self.template_handler.get_test_template_vars(pm)
 

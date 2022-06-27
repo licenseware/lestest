@@ -1,6 +1,5 @@
 from package.n2.n2_module import func3
 
-# from ..n2_module import func3
 # from package.n2.n2_module import func3
 
 

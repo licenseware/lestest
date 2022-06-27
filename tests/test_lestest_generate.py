@@ -1,4 +1,5 @@
 import os
+import re
 import unittest
 from lestest import (
     Lestest,
@@ -33,4 +34,10 @@ class TestGenerateLestest(unittest.TestCase):
 
         for path in paths.unittests:
             assert os.path.isfile(path)
+
+            with open(path, "r") as f:
+                filedata = f.read()
+
+            assert re.search(r"from\spackage", filedata)
+
             os.remove(path)

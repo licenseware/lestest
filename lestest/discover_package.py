@@ -55,6 +55,8 @@ class DiscoverPackage:
 
         non_imported_funcs = []
         for func_name in functions:
+            if func_name.startswith("_"):
+                continue
             if moduletext.count("def " + func_name) == 1:
                 md = types.MemberDetails(
                     object_name=func_name,
@@ -77,6 +79,8 @@ class DiscoverPackage:
 
         non_imported_classes = []
         for cls_name in classes:
+            if cls_name.startswith("_"):
+                continue
             if moduletext.count("class " + cls_name) == 1:
                 md = types.MemberDetails(
                     object_name=cls_name,
@@ -164,10 +168,8 @@ class DiscoverPackage:
 
         absolute_imports_converter(package_name or "app")
 
-        mp = os.path.abspath(module_path)
-
         module_name = os.path.basename(module_path).split(".py")[0]
-        spec = importutil.spec_from_file_location(module_name, mp)
+        spec = importutil.spec_from_file_location(module_name, module_path)
         module = importutil.module_from_spec(spec)
         spec.loader.exec_module(module)
 

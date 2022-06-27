@@ -28,7 +28,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=REQUIREMENTS,
-    packages=find_packages(where=".", exclude=["tests"]),
+    packages=find_packages(where=".", exclude=["tests", "package", "app"]),
     include_package_data=True,
     package_data={"": ["*"]},
     entry_points={

@@ -13,9 +13,10 @@ build:
 
 
 install:
+	pip3 uninstall -y lestest
 	python3 setup.py bdist_wheel sdist
 	rm -rf build
 	pip3 install dist/lestest-0.0.1-py3-none-any.whl
 
 uninstall:
-	pip3 uninstall lestest
+	pip3 uninstall -y lestest
