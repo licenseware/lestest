@@ -25,7 +25,7 @@ class Lestest:
 
         """
         pass
-
+        
     def generate(self):
         """Generate unittests from the discovered packages in the current directory"""
 

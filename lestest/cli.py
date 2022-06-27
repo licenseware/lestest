@@ -24,7 +24,7 @@ def generate(package: str = None):
         tox=ToxCreator(),
         pytestini=PytestIniCreator(),
         requirements=RequirementsCreator(),
-        unittest=UnittestCreator(package),
+        unittest=UnittestCreator(package or "app"),
     )
 
     lestest.generate()

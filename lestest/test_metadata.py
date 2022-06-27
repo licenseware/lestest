@@ -6,19 +6,36 @@ class TestMetadata:
     @staticmethod
     def get_mock_params_from_object(object: callable):
 
-        object_params = list(dict(inspect.signature(object).parameters).values())
+        try:
+            object_params = list(dict(inspect.signature(object).parameters).values())
+        except:
+            object_params = {"check": "callable"}
 
         mock_params = {}
         for op in object_params:
-            if op.name == "self":
-                continue
-            if isinstance(op.annotation(), str):
+
+            try:
+                annotation_instance = op.annotation()
+            except:
+                annotation_instance = "default_string"
+
+            if hasattr(op, "name"):
+                if getattr(op, "name") == "self":
+                    continue
+            else:
+
+                class MockOp:
+                    name = "unknown"
+
+                op = MockOp
+
+            if isinstance(annotation_instance, str):
                 mock_params[op.name] = "'fill this'"
-            elif isinstance(op.annotation(), dict):
+            elif isinstance(annotation_instance, dict):
                 mock_params[op.name] = {"key": "fill this"}
-            elif isinstance(op.annotation(), tuple):
+            elif isinstance(annotation_instance, tuple):
                 mock_params[op.name] = ("fill", "this")
-            elif isinstance(op.annotation(), list):
+            elif isinstance(annotation_instance, list):
                 mock_params[op.name] = ["fill", "this"]
             else:
                 mock_params[op.name] = "'specify type or fill this'"

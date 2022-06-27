@@ -32,4 +32,6 @@ class PytestIniCreator:
 
         self.base.save_file(path, content)
 
+        print("File `pytest_ini` ready")
+
         return path

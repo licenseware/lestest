@@ -1,8 +1,9 @@
 import os
 import inspect
+import importlib.util as importutil
 from typing import List
 from lestest import types
-import importlib.util as importutil
+from lestest.absolute_imports import to_absolute_imports
 
 
 class DiscoverPackage:
@@ -152,10 +153,21 @@ class DiscoverPackage:
         return import_statements
 
     @staticmethod
-    def get_module_members(module_path: str) -> List[types.MemberDetails]:
+    def get_module_members(
+        module_path: str,
+        package_name: str = None,
+        absolute_imports_converter: callable = to_absolute_imports,
+    ) -> List[types.MemberDetails]:
+
+        if module_path.startswith("./") and package_name is None:
+            package_name = module_path.split(os.path.sep)[1]
+
+        absolute_imports_converter(package_name or "app")
+
+        mp = os.path.abspath(module_path)
 
         module_name = os.path.basename(module_path).split(".py")[0]
-        spec = importutil.spec_from_file_location(module_name, module_path)
+        spec = importutil.spec_from_file_location(module_name, mp)
         module = importutil.module_from_spec(spec)
         spec.loader.exec_module(module)
 
@@ -188,5 +200,6 @@ class DiscoverPackage:
         for module_path in module_paths:
             mm = DiscoverPackage.get_module_members(module_path)
             allmm.extend(mm)
+            print(f"Inspected module: `{module_path}`")
 
         return allmm

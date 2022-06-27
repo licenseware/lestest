@@ -15,7 +15,7 @@ class UnittestCreator:
         filepath: str = "./tests",
         template_filename: str = "test_template.py.jinja",
         template_resource: ModuleType = templates,
-        **template_vars
+        **template_vars,
     ) -> None:
         self.base = base or BaseJinja
         self.inspector = inspector or DiscoverPackage
@@ -49,5 +49,7 @@ class UnittestCreator:
 
             self.base.save_file(path, content)
             paths.append(path)
+
+            print(f"Unittest file `{path}` ready")
 
         return paths

@@ -32,4 +32,6 @@ class ToxCreator:
 
         self.base.save_file(path, content)
 
+        print("File `tox.ini` ready")
+
         return path

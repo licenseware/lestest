@@ -17,6 +17,5 @@ install:
 	rm -rf build
 	pip3 install dist/lestest-0.0.1-py3-none-any.whl
 
-
 uninstall:
 	pip3 uninstall lestest

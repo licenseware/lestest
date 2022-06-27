@@ -32,4 +32,6 @@ class RequirementsCreator:
 
         self.base.save_file(path, content)
 
+        print("File `requirements-dev.txt` ready")
+
         return path

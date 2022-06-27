@@ -92,3 +92,8 @@ This way you can alter functionality in any way you want.
 - see coverage details in the terminal: `coverage report -m`; 
 - create coverage badge from coverage created: `coverage-badge -o coverage.svg`;
 - shortcut for running tests: `make run-tests`;
+- install lestest wheel: `make install`;
+- uninstall lestest: `make uninstall`;
+- build lestest wheel: `make build`;
+
+
