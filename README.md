@@ -4,6 +4,11 @@
 
 Generate boilerplate unittests from given package. Ensures each class or function has a corespondent test. 
 
+## Install
+
+```bash
+pip3 install git+https://git@github.com/licenseware/lestest.git
+```
 
 
 ## Generate boilerplate tests
