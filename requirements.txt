@@ -1,4 +1,4 @@
-MarkupSafe==2.0.1
+MarkupSafe==2.1.5
 Jinja2<3
 typer<0.4
 pytest<7
