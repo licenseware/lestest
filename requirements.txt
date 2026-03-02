@@ -1,6 +1,6 @@
 MarkupSafe==2.0.1
 Jinja2<3
-typer<0.4
+typer<0.25
 pytest<7
 coverage<7
 coverage-badge<1
