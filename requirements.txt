@@ -3,4 +3,4 @@ Jinja2<3
 typer<0.4
 pytest<7
 coverage<7
-coverage-badge<1
+coverage-badge<2
